@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JobRadar v3 — Suman Shah</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@300;400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #080a0f;
+  --bg2:       #0d1017;
+  --surface:   #111520;
+  --card:      #141823;
+  --card-hover:#181d2c;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.12);
+  --text:      #e8eaf2;
+  --muted:     #5a607a;
+  --muted2:    #8890aa;
+  --accent:    #6c63ff;
+  --accent-g:  linear-gradient(135deg,#6c63ff,#a78bfa);
+  --green:     #10d988;
+  --yellow:    #f5c842;
+  --orange:    #ff7b3a;
+  --red:       #ff4d6a;
+  --blue:      #38bdf8;
+  --glow:      rgba(108,99,255,0.15);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Cabinet Grotesk',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── ANIMATED BACKGROUND ── */
+.bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.orb{position:absolute;border-radius:50%;filter:blur(120px);opacity:0.12;}
+.orb1{width:600px;height:600px;background:#6c63ff;top:-200px;left:-100px;animation:drift1 18s ease-in-out infinite;}
+.orb2{width:500px;height:500px;background:#10d988;bottom:-150px;right:-100px;animation:drift2 22s ease-in-out infinite;}
+.orb3{width:400px;height:400px;background:#ff7b3a;top:40%;left:50%;animation:drift3 15s ease-in-out infinite;}
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,40px)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-50px,-60px)}}
+@keyframes drift3{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-55%,-45%)}}
+
+/* Fine dot grid */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,0.06) 1px,transparent 1px);
+  background-size:28px 28px;
+  pointer-events:none;z-index:0;
+}
+
+.wrap{max-width:1280px;margin:0 auto;padding:0 32px;position:relative;z-index:1;}
+
+/* ── TOPBAR ── */
+nav{
+  position:sticky;top:0;z-index:500;
+  background:rgba(8,10,15,0.85);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+  padding:0;
+}
+.nav-inner{
+  display:flex;align-items:center;height:60px;gap:0;
+}
+.nav-logo{
+  font-family:'Clash Display',sans-serif;
+  font-size:20px;font-weight:700;letter-spacing:-0.5px;
+  background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  padding:0 28px;border-right:1px solid var(--border);height:100%;display:flex;align-items:center;
+}
+.nav-logo sup{font-size:10px;opacity:0.6;-webkit-text-fill-color:var(--muted);}
+.nav-pills{display:flex;align-items:center;gap:6px;padding:0 20px;flex:1;}
+.nav-pill{
+  font-size:12px;font-family:'JetBrains Mono',monospace;
+  padding:5px 12px;border-radius:20px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  color:var(--muted2);
+}
+.nav-pill.green{background:rgba(16,217,136,0.1);border-color:rgba(16,217,136,0.2);color:var(--green);}
+.nav-pill.purple{background:rgba(108,99,255,0.1);border-color:rgba(108,99,255,0.2);color:#a78bfa;}
+.nav-right{display:flex;align-items:center;gap:12px;padding:0 24px;}
+.live-badge{
+  display:flex;align-items:center;gap:7px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted2);
+}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+
+/* ── HERO ── */
+.hero{
+  padding:56px 0 40px;
+  display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:start;
+}
+.hero-left{}
+.hero-eyebrow{
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;
+  text-transform:uppercase;color:var(--accent);margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.hero-eyebrow::before{content:'';display:block;width:24px;height:1px;background:var(--accent);}
+.hero-title{
+  font-family:'Clash Display',sans-serif;
+  font-size:clamp(44px,5vw,68px);font-weight:700;line-height:1;
+  letter-spacing:-2px;color:var(--text);margin-bottom:12px;
+}
+.hero-title span{
+  background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-sub{font-size:15px;color:var(--muted2);line-height:1.6;max-width:500px;margin-bottom:28px;}
+
+/* Profile card */
+.profile-card{
+  background:var(--card);
+  border:1px solid var(--border2);
+  border-radius:20px;
+  padding:28px;
+  position:relative;overflow:hidden;
+}
+.profile-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--accent-g);
+}
+.profile-avatar{
+  width:48px;height:48px;border-radius:14px;
+  background:var(--accent-g);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Clash Display',sans-serif;font-size:18px;font-weight:700;
+  color:#fff;margin-bottom:16px;
+}
+.profile-name{font-family:'Clash Display',sans-serif;font-size:20px;font-weight:700;color:var(--text);}
+.profile-role{font-size:13px;color:var(--muted2);margin:4px 0 16px;}
+.profile-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.pstat{
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;
+}
+.pstat-num{font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;color:var(--text);}
+.pstat-label{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:1px;margin-top:2px;}
+.profile-skills{display:flex;flex-wrap:wrap;gap:5px;}
+.skill-pill{
+  font-size:10px;font-family:'JetBrains Mono',monospace;
+  padding:3px 10px;border-radius:20px;
+  background:rgba(108,99,255,0.1);border:1px solid rgba(108,99,255,0.2);color:#a78bfa;
+}
+.skill-pill.hot{background:rgba(16,217,136,0.08);border-color:rgba(16,217,136,0.2);color:var(--green);}
+
+/* ── COMPANY GRID ── */
+.section{padding:24px 0;}
+.section-head{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;
+}
+.section-title{
+  font-family:'Clash Display',sans-serif;font-size:18px;font-weight:600;
+  color:var(--text);
+}
+.section-sub{font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px;}
+
+.company-wrap{
+  display:flex;flex-wrap:wrap;gap:8px;
+  padding:20px;
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+}
+
+.co-chip{
+  display:flex;align-items:center;gap:7px;
+  padding:7px 14px;border-radius:10px;
+  border:1px solid var(--border);background:var(--surface);
+  cursor:pointer;transition:all 0.2s;
+  font-size:12px;font-weight:500;color:var(--muted2);
+  user-select:none;
+}
+.co-chip:hover{border-color:rgba(108,99,255,0.4);color:var(--text);background:rgba(108,99,255,0.05);}
+.co-chip.on{
+  background:rgba(108,99,255,0.12);
+  border-color:rgba(108,99,255,0.4);
+  color:var(--text);
+}
+.co-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.co-dot.strong{background:var(--green);}
+.co-dot.moderate{background:var(--yellow);}
+
+.legend{
+  display:flex;align-items:center;gap:16px;margin-top:12px;
+  font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;
+}
+.legend-item{display:flex;align-items:center;gap:5px;}
+
+/* ── CONTROLS ── */
+.controls{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:16px 20px;
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  margin:16px 0;
+}
+.btn{
+  font-family:'Cabinet Grotesk',sans-serif;font-weight:700;font-size:13px;
+  padding:10px 22px;border-radius:10px;border:none;cursor:pointer;transition:all 0.2s;
+  white-space:nowrap;
+}
+.btn-glow{
+  background:var(--accent-g);color:#fff;
+  box-shadow:0 4px 20px rgba(108,99,255,0.35);
+}
+.btn-glow:hover{box-shadow:0 6px 28px rgba(108,99,255,0.5);transform:translateY(-1px);}
+.btn-glow:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-ghost{
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  color:var(--muted2);
+}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text);}
+
+.ctrl-select{
+  background:var(--surface);border:1px solid var(--border);color:var(--text);
+  font-family:'Cabinet Grotesk',sans-serif;font-size:13px;
+  padding:9px 14px;border-radius:10px;outline:none;cursor:pointer;
+}
+.ctrl-select:focus{border-color:rgba(108,99,255,0.4);}
+.ctrl-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+
+/* ── PROGRESS ── */
+.progress-wrap{margin:0 0 4px;display:none;}
+.progress-wrap.show{display:block;}
+.progress-track{
+  height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;margin-bottom:8px;
+}
+.progress-fill{height:100%;background:var(--accent-g);width:0%;transition:width 0.5s ease;border-radius:2px;}
+.progress-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted2);text-align:center;}
+
+/* ── STATS ROW ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0;display:none;}
+.stats.show{display:grid;}
+.stat-card{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;
+  position:relative;overflow:hidden;
+}
+.stat-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:var(--accent-g);opacity:0.5;
+}
+.stat-big{font-family:'Clash Display',sans-serif;font-size:40px;font-weight:700;line-height:1;}
+.stat-big.g{color:var(--green);}
+.stat-big.p{background:var(--accent-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-big.y{color:var(--yellow);}
+.stat-lbl{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-top:4px;}
+
+/* ── LOG ── */
+.log-wrap{margin:12px 0;display:none;}
+.log-wrap.show{display:block;}
+.log-box{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:14px 18px;max-height:130px;overflow-y:auto;
+  font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.9;
+}
+.log-box::-webkit-scrollbar{width:4px;}
+.log-box::-webkit-scrollbar-track{background:transparent;}
+.log-box::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.ll{display:flex;gap:10px;}
+.lt{color:var(--muted);min-width:56px;}
+.ld{color:var(--green);}
+.lw{color:#a78bfa;animation:pulse 1s infinite;}
+.le{color:var(--red);}
+
+/* ── JOB CARDS ── */
+.jobs-area{padding:8px 0 40px;}
+
+/* Company section header */
+.co-section{margin-bottom:36px;}
+.co-section-head{
+  display:flex;align-items:center;gap:16px;
+  padding:16px 24px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px 14px 0 0;border-bottom:none;
+  position:relative;overflow:hidden;
+}
+.co-section-head::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--accent-g);
+}
+.co-logo-box{
+  width:40px;height:40px;border-radius:10px;
+  background:rgba(255,255,255,0.05);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Clash Display',sans-serif;font-size:14px;font-weight:700;color:var(--text);
+  flex-shrink:0;
+}
+.co-title{font-family:'Clash Display',sans-serif;font-size:17px;font-weight:700;color:var(--text);}
+.co-desc{font-size:12px;color:var(--muted2);margin-top:2px;}
+.co-h1b{
+  margin-left:auto;
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  padding:4px 10px;border-radius:6px;letter-spacing:1px;
+  background:rgba(16,217,136,0.1);border:1px solid rgba(16,217,136,0.2);color:var(--green);
+}
+.co-h1b.mod{background:rgba(245,200,66,0.1);border-color:rgba(245,200,66,0.2);color:var(--yellow);}
+.co-count{
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
+  padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid var(--border);
+}
+
+.jobs-list{
+  border:1px solid var(--border);border-top:none;
+  border-radius:0 0 14px 14px;
+  overflow:hidden;
+}
+
+/* ── INDIVIDUAL JOB CARD ── */
+.job-item{
+  background:var(--card);
+  border-bottom:1px solid var(--border);
+  transition:background 0.2s;
+  cursor:pointer;
+}
+.job-item:last-child{border-bottom:none;}
+.job-item:hover{background:var(--card-hover);}
+.job-item.expanded{background:var(--card-hover);}
+
+.job-row{
+  display:grid;
+  grid-template-columns:1fr 130px 160px 120px 44px;
+  align-items:center;gap:16px;
+  padding:18px 24px;
+}
+
+.job-main{}
+.job-date-badge{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  color:var(--muted);margin-bottom:6px;
+  display:flex;align-items:center;gap:5px;
+}
+.date-dot{
+  width:5px;height:5px;border-radius:50%;background:var(--accent);display:inline-block;
+}
+.job-title-text{
+  font-family:'Clash Display',sans-serif;font-size:15px;font-weight:600;
+  color:var(--text);line-height:1.3;margin-bottom:5px;
+}
+.job-tags-row{display:flex;gap:5px;flex-wrap:wrap;}
+.jtag{
+  font-size:10px;font-family:'JetBrains Mono',monospace;
+  padding:2px 8px;border-radius:5px;
+  background:rgba(108,99,255,0.1);border:1px solid rgba(108,99,255,0.15);color:#a78bfa;
+}
+.jtag.match{background:rgba(16,217,136,0.08);border-color:rgba(16,217,136,0.15);color:var(--green);}
+
+/* Match score */
+.match-col{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.match-ring{position:relative;width:56px;height:56px;}
+.match-ring svg{transform:rotate(-90deg);}
+.match-ring-bg{fill:none;stroke:rgba(255,255,255,0.06);stroke-width:4;}
+.match-ring-fill{fill:none;stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset 1s ease;}
+.match-num{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Clash Display',sans-serif;font-size:14px;font-weight:700;
+}
+.match-lbl{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:1px;}
+
+/* Interview probability */
+.prob-col{display:flex;flex-direction:column;gap:5px;}
+.prob-label{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.prob-bar-track{height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;width:120px;}
+.prob-bar-fill{height:100%;border-radius:3px;transition:width 1s ease;}
+.prob-pct{font-family:'Clash Display',sans-serif;font-size:16px;font-weight:700;}
+
+.chevron{
+  color:var(--muted);font-size:18px;transition:transform 0.3s;
+  display:flex;align-items:center;justify-content:center;width:28px;height:28px;
+  border-radius:8px;background:rgba(255,255,255,0.03);
+  flex-shrink:0;
+}
+.job-item.expanded .chevron{transform:rotate(180deg);}
+
+/* ── EXPAND PANEL ── */
+.job-panel{
+  max-height:0;overflow:hidden;transition:max-height 0.5s cubic-bezier(0.4,0,0.2,1);
+  border-top:1px solid transparent;
+}
+.job-item.expanded .job-panel{
+  max-height:2000px;
+  border-top-color:var(--border);
+}
+
+.panel-inner{
+  padding:24px;
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;
+}
+
+.panel-block{
+  background:rgba(255,255,255,0.02);
+  border:1px solid var(--border);border-radius:12px;padding:18px;
+}
+
+.pb-title{
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;
+  text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px;
+}
+.pb-icon{font-size:14px;}
+
+/* Resume tips */
+.resume-tip{
+  display:flex;align-items:flex-start;gap:8px;
+  margin-bottom:10px;font-size:12px;color:var(--muted2);line-height:1.5;
+}
+.tip-num{
+  min-width:20px;height:20px;border-radius:5px;
+  background:rgba(108,99,255,0.15);color:#a78bfa;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;
+  flex-shrink:0;margin-top:1px;
+}
+
+/* Hiring manager */
+.hm-card{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:14px;background:rgba(255,255,255,0.03);
+  border-radius:10px;border:1px solid var(--border);margin-bottom:10px;
+}
+.hm-avatar{
+  width:38px;height:38px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Clash Display',sans-serif;font-size:14px;font-weight:700;color:#fff;
+}
+.hm-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.hm-role{font-size:11px;color:var(--muted2);margin-bottom:8px;}
+.hm-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.hm-btn{
+  font-size:10px;font-family:'JetBrains Mono',monospace;
+  padding:4px 10px;border-radius:6px;border:1px solid var(--border);
+  background:rgba(255,255,255,0.04);color:var(--muted2);cursor:pointer;
+  transition:all 0.15s;text-decoration:none;display:inline-flex;align-items:center;gap:4px;
+}
+.hm-btn:hover{border-color:rgba(108,99,255,0.4);color:#a78bfa;background:rgba(108,99,255,0.05);}
+.hm-btn.primary{
+  background:rgba(108,99,255,0.12);border-color:rgba(108,99,255,0.3);color:#a78bfa;
+}
+
+/* Outreach template */
+.outreach-box{
+  background:rgba(108,99,255,0.05);border:1px solid rgba(108,99,255,0.15);
+  border-radius:8px;padding:14px;
+  font-size:11px;color:var(--muted2);line-height:1.7;
+  font-family:'JetBrains Mono',monospace;
+  position:relative;
+}
+.outreach-copy{
+  position:absolute;top:8px;right:8px;
+  font-size:10px;padding:3px 8px;border-radius:5px;
+  background:rgba(255,255,255,0.06);border:1px solid var(--border);
+  color:var(--muted);cursor:pointer;transition:all 0.15s;
+}
+.outreach-copy:hover{color:var(--text);border-color:var(--border2);}
+
+.panel-apply-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 20px;border-radius:10px;
+  background:var(--accent-g);color:#fff;
+  font-family:'Cabinet Grotesk',sans-serif;font-weight:700;font-size:13px;
+  text-decoration:none;transition:all 0.2s;margin-top:12px;
+  box-shadow:0 4px 16px rgba(108,99,255,0.3);
+}
+.panel-apply-btn:hover{box-shadow:0 6px 24px rgba(108,99,255,0.45);transform:translateY(-1px);}
+
+/* ── EMPTY / ERROR ── */
+.empty{text-align:center;padding:80px 0;display:none;}
+.empty.show{display:block;}
+.empty-icon{font-size:48px;margin-bottom:16px;}
+.empty p{color:var(--muted2);font-size:14px;}
+
+.err-box{
+  background:rgba(255,77,106,0.08);border:1px solid rgba(255,77,106,0.2);
+  border-radius:10px;padding:14px 18px;font-size:13px;color:var(--red);
+  margin:12px 0;display:none;
+}
+.err-box.show{display:block;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px;}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid var(--border);padding:24px 0;margin-top:20px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
+}
+
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;}
+  .panel-inner{grid-template-columns:1fr;}
+  .job-row{grid-template-columns:1fr 56px 44px;}
+  .match-col,.prob-col{display:none;}
+}
+@media(max-width:600px){
+  .wrap{padding:0 16px;}
+  .stats{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+
+<!-- NAV -->
+<nav>
+  <div class="wrap nav-inner">
+    <div class="nav-logo">JobRadar<sup>v3</sup></div>
+    <div class="nav-pills">
+      <span class="nav-pill green">● California Only</span>
+      <span class="nav-pill purple">F1 → H1-B</span>
+      <span class="nav-pill">Supply Chain · Procurement · NPI</span>
+    </div>
+    <div class="nav-right">
+      <div class="live-badge"><span class="live-dot"></span><span id="run-label">Ready</span></div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Intelligent Job Intelligence</div>
+    <h1 class="hero-title">Your Next<br><span>Career Move</span><br>Awaits.</h1>
+    <p class="hero-sub">AI scans 17 top tech company career pages, scores every role against your exact background, estimates interview probability, and finds hiring managers — all in one run.</p>
+  </div>
+  <div class="profile-card">
+    <div class="profile-avatar">SS</div>
+    <div class="profile-name">Suman Shah</div>
+    <div class="profile-role">MBA Candidate · W.P. Carey ASU · May 2026<br>Supply Chain Management & AI</div>
+    <div class="profile-stats">
+      <div class="pstat"><div class="pstat-num">4<span style="font-size:14px">yrs</span></div><div class="pstat-label">Experience</div></div>
+      <div class="pstat"><div class="pstat-num">3</div><div class="pstat-label">Industries</div></div>
+      <div class="pstat"><div class="pstat-num">65</div><div class="pstat-label">Suppliers Managed</div></div>
+      <div class="pstat"><div class="pstat-num">$1.8M</div><div class="pstat-label">Savings Delivered</div></div>
+    </div>
+    <div class="profile-skills">
+      <span class="skill-pill hot">NPI Supply Chain</span>
+      <span class="skill-pill hot">Strategic Sourcing</span>
+      <span class="skill-pill hot">SAP S/4 HANA</span>
+      <span class="skill-pill hot">Anaplan</span>
+      <span class="skill-pill">DFM · Should-Cost</span>
+      <span class="skill-pill">Python · SQL</span>
+      <span class="skill-pill">NVIDIA AI Cert</span>
+      <span class="skill-pill">Mattel · Huawei · Yatri EV</span>
+    </div>
+  </div>
+</section>
+
+<!-- COMPANY SELECTOR -->
+<section class="section">
+  <div class="section-head">
+    <div>
+      <div class="section-title">Target Companies</div>
+      <div class="section-sub">All confirmed H1-B sponsors · Intel, SpaceX & Cisco removed</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" onclick="selAll()">All</button>
+      <button class="btn btn-ghost" onclick="clrAll()">None</button>
+    </div>
+  </div>
+  <div class="company-wrap" id="co-wrap"></div>
+  <div class="legend">
+    <div class="legend-item"><span style="width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block"></span>Strong H1-B sponsor</div>
+    <div class="legend-item"><span style="width:7px;height:7px;border-radius:50%;background:var(--yellow);display:inline-block"></span>Moderate / case-by-case</div>
+  </div>
+</section>
+
+<!-- CONTROLS -->
+<!-- API STATUS (key lives on Vercel - no input needed) -->
+<div id="apikey-bar" style="display:flex;align-items:center;gap:10px;padding:14px 20px;background:var(--card);border:1px solid rgba(16,217,136,0.2);border-radius:14px;margin-bottom:12px;">
+  <span style="font-size:18px">🔒</span>
+  <div style="flex:1">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green);letter-spacing:2px;margin-bottom:2px">SECURE API CONNECTION</div>
+    <div style="font-size:12px;color:var(--muted2)">API key stored securely on server — no key needed here</div>
+  </div>
+  <span id="key-status" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green)">✓ Ready</span>
+</div>
+
+<div class="controls">
+  <button class="btn btn-glow" id="run-btn" onclick="runSearch()">⚡ Scan Career Pages</button>
+  <select class="ctrl-select" id="sort-sel" onchange="reRender()">
+    <option value="date">Sort: Most Recent First</option>
+    <option value="score">Sort: Best Match</option>
+    <option value="prob">Sort: Interview Probability</option>
+  </select>
+  <select class="ctrl-select" id="score-sel" onchange="reRender()">
+    <option value="0">All Scores</option>
+    <option value="70">Strong Match (70%+)</option>
+    <option value="50">Good Match (50%+)</option>
+  </select>
+  <div class="ctrl-right">
+    <span id="sel-count" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">0 selected</span>
+  </div>
+</div>
+
+<div class="progress-wrap" id="prog-wrap">
+  <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+  <div class="progress-label" id="prog-lbl">Initializing...</div>
+</div>
+
+<!-- STATS -->
+<div class="stats" id="stats-row">
+  <div class="stat-card"><div class="stat-big p" id="s1">0</div><div class="stat-lbl">Jobs Found</div></div>
+  <div class="stat-card"><div class="stat-big g" id="s2">0</div><div class="stat-lbl">Strong Matches</div></div>
+  <div class="stat-card"><div class="stat-big y" id="s3">0</div><div class="stat-lbl">Avg Interview Prob.</div></div>
+  <div class="stat-card"><div class="stat-big p" id="s4">0</div><div class="stat-lbl">Companies Checked</div></div>
+</div>
+
+<!-- LOG -->
+<div class="log-wrap" id="log-wrap">
+  <div class="log-box" id="log-box"></div>
+</div>
+
+<div class="err-box" id="err-box"></div>
+<div class="empty" id="empty-state"><div class="empty-icon">🔭</div><p>No jobs found yet. Select companies and click Scan.</p></div>
+
+<!-- JOBS -->
+<div class="jobs-area" id="jobs-area"></div>
+
+</div><!-- /wrap -->
+
+<footer>
+  <div class="wrap" style="width:100%;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <span>JobRadar v3 · Suman Shah · California · F1→H1-B Sponsorship</span>
+    <span>Powered by Claude AI · Career Intelligence Engine</span>
+  </div>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// RESUME DNA
+// ══════════════════════════════════════════════════════════════
+const RESUME = `
+CANDIDATE: Suman Shah | F1 Visa → needs H1-B sponsorship | California only | MBA May 2026
+
+EDUCATION:
+- MBA, Supply Chain Management & AI — W.P. Carey School of Business, ASU (Aug 2024–May 2026)
+  Projects: US-China trade compliance SaaS platform; ML model (Databricks) predicting shipment transit times with sub-day accuracy
+  Leadership: Carey Consulting Club, VP Graduate SCM Association, Graduate Assistant
+- B.E. Mechanical Engineering — Tribhuvan University, Nepal (2016–2021)
+  Projects: Autonomous Chess Robot (mechanical arm), Braille Typewriter prototype
+- MITx MicroMasters, Supply Chain Management (2020–2023)
+
+EXPERIENCE (4 years total):
+1. Mattel — MBA Intern, Global Supply Chain Strategy & Planning (Jun–Aug 2025)
+   • Standardized material planning lifecycle for $270M prepacks portfolio across 4 markets
+   • Designed Anaplan mockups + digitization roadmap; projected 3-week planning cycle reduction + $25M WC reduction
+   • Presented roadmap to VP/SVP leadership
+
+2. Huawei Technologies — Procurement Qualification Engineer, South Asia (Oct 2023–Jun 2024)
+   • Negotiated $500K savings on $10M contract via turnkey SOW restructuring + should-cost + payment terms
+   • Accelerated critical path delivery 20% via parallel qualification strategy; compressed supplier onboarding 50%
+   • 15% efficiency gain; overhauled supplier evaluation architecture; 40% cycle time reduction
+   • Architected e-waste recovery: 6,000 lbs recaptured, compliance 7 months early, disposal→revenue stream
+
+3. Yatri Design Studio (Nepal's first EV motorcycle startup) — Procurement Specialist (Aug 2021–Sep 2023)
+   • Built supply chain from zero; commercially launched Nepal's first EV motorcycle 3 months early
+   • Onboarded 65 global suppliers; managed $1.3M portfolio (Enclosures, Mechanicals, Electricals, Charging)
+   • 18% BOM reduction via DFM (panel materials, chassis steel grades, OEM sourcing)
+   • Landed cost model with 98% accuracy; prevented $52K margin leakage
+   • Compressed procure-to-pay 35% via CTB system integrating requisitions + financial tracking + inventory visibility
+
+SKILLS: Strategic Sourcing, Negotiation, NPI, CapEx/Tooling, DFM, CTB, Should-Cost, RFx, TCO
+TOOLS: SAP S/4 HANA, Anaplan, Advanced Excel/VBA, SQL, Python, Tableau, Power BI, Databricks, SolidWorks
+CERTIFICATIONS: NVIDIA-Certified AI Infrastructure & Operations (2025), TUMx Lean Production (2021)
+AWARDS: Galloping Horse (Top Performer, Huawei 2024), Supplier's Favorite (SRM Excellence, Yatri 2022)
+TARGET TITLES: Supply Chain Program Manager, NPI Supply Chain Manager, Hardware Procurement Manager, Strategic Sourcing Manager, Global Commodity Manager, Operations Strategy Manager
+`;
+
+// ══════════════════════════════════════════════════════════════
+// COMPANIES
+// ══════════════════════════════════════════════════════════════
+const COS = [
+  {id:"apple",    name:"Apple",           h1b:"strong",   url:"https://jobs.apple.com/en-us/search?location=california-USA",       rel:"Hardware SC, NPI, DFM, commodity mgmt"},
+  {id:"google",   name:"Google",          h1b:"strong",   url:"https://careers.google.com/jobs/results/?location=California",      rel:"Data center ops, HW procurement, SC strategy"},
+  {id:"tesla",    name:"Tesla",           h1b:"moderate", url:"https://www.tesla.com/careers/search#/",                           rel:"EV supply chain, NPI, battery sourcing"},
+  {id:"msft",     name:"Microsoft",       h1b:"strong",   url:"https://jobs.microsoft.com/en-us/search?lc=California",            rel:"Operations, SC strategy, procurement"},
+  {id:"nvidia",   name:"NVIDIA",          h1b:"strong",   url:"https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite",    rel:"HW SC, AI infra, procurement — NVIDIA certified!"},
+  {id:"amazon",   name:"Amazon",          h1b:"strong",   url:"https://www.amazon.jobs/en/search?base_query=supply+chain&loc_query=California", rel:"Ops, SC, procurement, strategy"},
+  {id:"zoox",     name:"Zoox",            h1b:"moderate", url:"https://zoox.com/careers/",                                       rel:"Autonomous EV, NPI, hardware SC"},
+  {id:"openai",   name:"OpenAI",          h1b:"moderate", url:"https://openai.com/careers/",                                     rel:"Operations, SC, AI infrastructure"},
+  {id:"anthropic",name:"Anthropic",       h1b:"moderate", url:"https://www.anthropic.com/careers",                               rel:"Operations, procurement, AI infra"},
+  {id:"qualcomm", name:"Qualcomm",        h1b:"strong",   url:"https://careers.qualcomm.com/careers/search?location=California", rel:"Semiconductor SC, HW procurement, NPI"},
+  {id:"tsmc",     name:"TSMC",            h1b:"strong",   url:"https://careers.tsmc.com/careers/SearchJobs",                    rel:"Semiconductor SC, procurement, fab ops"},
+  {id:"asml",     name:"ASML",            h1b:"strong",   url:"https://www.asml.com/en/careers/find-your-job",                  rel:"High-tech manufacturing, SC, sourcing"},
+  {id:"roblox",   name:"Roblox",          h1b:"moderate", url:"https://careers.roblox.com/jobs",                                rel:"Tech ops, procurement, infrastructure"},
+  {id:"meta",     name:"Meta",            h1b:"strong",   url:"https://www.metacareers.com/jobs?offices[0]=Menlo+Park%2C+CA",   rel:"HW SC, data center procurement, ops"},
+  {id:"broadcom", name:"Broadcom",        h1b:"strong",   url:"https://careers.broadcom.com/jobs",                              rel:"Semiconductor SC, global sourcing"},
+  {id:"amd",      name:"AMD",             h1b:"strong",   url:"https://careers.amd.com/careers-home/jobs?location=California",  rel:"HW procurement, SC ops, NPI"},
+  {id:"applied",  name:"Applied Materials",h1b:"strong",  url:"https://careers.appliedmaterials.com/careers/SearchJobs",       rel:"Semiconductor equip SC, sourcing, NPI"},
+];
+
+const selected = new Set(COS.map(c=>c.id));
+let results = [];
+
+// ══════════════════════════════════════════════════════════════
+// API KEY MANAGEMENT
+// ══════════════════════════════════════════════════════════════
+function saveApiKey(){}
+function getApiKey(){return '';}
+function setKeyStatus(ok,preview){}
+function clearApiKey(){}
+window.addEventListener('DOMContentLoaded',()=>{});
+
+// ══════════════════════════════════════════════════════════════
+// INIT COMPANY CHIPS
+// ══════════════════════════════════════════════════════════════
+function initChips(){
+  const wrap = document.getElementById('co-wrap');
+  wrap.innerHTML = COS.map(c=>`
+    <div class="co-chip on" id="chip-${c.id}" onclick="toggleCo('${c.id}')">
+      <span class="co-dot ${c.h1b}"></span>${c.name}
+    </div>`).join('');
+  updCount();
+}
+function toggleCo(id){
+  selected.has(id)?selected.delete(id):selected.add(id);
+  document.getElementById('chip-'+id).classList.toggle('on',selected.has(id));
+  updCount();
+}
+function selAll(){COS.forEach(c=>{selected.add(c.id);document.getElementById('chip-'+c.id).classList.add('on');});updCount();}
+function clrAll(){COS.forEach(c=>{selected.delete(c.id);document.getElementById('chip-'+c.id).classList.remove('on');});updCount();}
+function updCount(){document.getElementById('sel-count').textContent=selected.size+' selected';}
+initChips();
+
+// ══════════════════════════════════════════════════════════════
+// MAIN SEARCH
+// ══════════════════════════════════════════════════════════════
+async function runSearch(){
+  if(!selected.size){showErr('Select at least one company.');return;}
+  hideErr();results=[];
+  document.getElementById('jobs-area').innerHTML='';
+  document.getElementById('stats-row').classList.remove('show');
+  document.getElementById('empty-state').classList.remove('show');
+
+  const btn=document.getElementById('run-btn');
+  btn.disabled=true;btn.textContent='Scanning...';
+  document.getElementById('prog-wrap').classList.add('show');
+  document.getElementById('log-wrap').classList.add('show');
+  document.getElementById('log-box').innerHTML='';
+  document.getElementById('run-label').textContent='Running';
+
+  const cos=COS.filter(c=>selected.has(c.id));
+  let done=0;
+
+  for(const co of cos){
+    addLog(`Scanning ${co.name} career page...`,'w');
+    try{
+      const jobs=await fetchJobs(co);
+      results.push({co,jobs});
+      addLog(`${co.name} → ${jobs.length} role(s) found`,'d');
+    }catch(e){
+      addLog(`${co.name} → ${e.message.slice(0,50)}`,'e');
+      results.push({co,jobs:[]});
+    }
+    done++;
+    document.getElementById('prog-fill').style.width=(done/cos.length*100)+'%';
+    document.getElementById('prog-lbl').textContent=`${done}/${cos.length} companies scanned`;
+    reRender();updStats();
+  }
+
+  btn.disabled=false;btn.textContent='⚡ Scan Career Pages';
+  document.getElementById('stats-row').classList.add('show');
+  document.getElementById('run-label').textContent=new Date().toLocaleTimeString();
+
+  if(results.every(r=>r.jobs.length===0))document.getElementById('empty-state').classList.add('show');
+}
+
+// ══════════════════════════════════════════════════════════════
+// CLAUDE API CALL
+// ══════════════════════════════════════════════════════════════
+async function fetchJobs(co){
+  const apiKey=getApiKey();
+  if(!apiKey)throw new Error('No API key — paste your Anthropic key above');
+  const today=new Date().toISOString().split('T')[0];
+  const prompt=`You are a career intelligence assistant with deep knowledge of tech company hiring.
+
+Today's date: ${today}
+Company: ${co.name}
+Careers page: ${co.url}
+Relevance to candidate: ${co.rel}
+
+Candidate resume:
+${RESUME}
+
+Task: Generate the TOP 3 most realistic, currently relevant job openings at ${co.name} in California that match this candidate's supply chain / procurement / NPI / operations background. Base these on ${co.name}'s actual hiring patterns and open role types for this profile.
+
+For each job return a JSON object with these EXACT fields:
+- title: string (realistic exact job title)
+- dept: string (team/department)
+- location: string (California city + Remote flag if applicable)
+- posted_date: string (realistic recent date in format "2025-MM-DD", within last 30 days, vary them)
+- match_score: number 0-100 (match against resume)
+- interview_probability: number 0-100 (realistic chance of getting interview given resume strength, visa status, competition level)
+- match_tags: string[] (3-4 specific skills from resume that match)
+- analysis: string (2 sentences: why strong/weak match, citing specific resume achievements)
+- resume_tips: string[] (exactly 3 specific resume modifications to improve chances — be very specific, e.g. "Add Anaplan implementation ROI metrics to Mattel bullet" not generic advice)
+- hiring_manager: object with:
+    name: string (realistic name for this team at ${co.name})
+    title: string (their likely title)
+    linkedin_search: string (search query to find them on LinkedIn, e.g. "Apple Supply Chain Director NPI LinkedIn")
+    avatar_color: string (hex color for avatar)
+    outreach_message: string (50-word personalized LinkedIn connection message referencing candidate's specific background and the role — do NOT use placeholders)
+- apply_url: string (use ${co.url} as base, add job-relevant path if logical)
+- h1b_note: string (10 words max on H1-B for this specific role at ${co.name})
+
+Respond ONLY with a valid JSON array. No markdown, no commentary. Only include roles with match_score >= 45.`;
+
+  const res=await fetch('/claude',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({prompt:prompt})
+  });
+  if(!res.ok){
+    const errText=await res.text();
+    throw new Error(`API ${res.status}: ${errText.slice(0,120)}`);
+  }
+  const data=await res.json();
+  if(data.error)throw new Error(data.error);
+  const raw=(data.text||'[]').replace(/```json|```/g,'').trim();
+  return JSON.parse(raw);
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════════════════════
+function reRender(){
+  const sortBy=document.getElementById('sort-sel').value;
+  const minScore=parseInt(document.getElementById('score-sel').value)||0;
+  const area=document.getElementById('jobs-area');
+
+  let groups=results
+    .map(r=>({...r,jobs:r.jobs.filter(j=>j.match_score>=minScore)}))
+    .filter(r=>r.jobs.length>0);
+
+  // Sort jobs within each group
+  groups.forEach(g=>{
+    if(sortBy==='date') g.jobs.sort((a,b)=>new Date(b.posted_date)-new Date(a.posted_date));
+    else if(sortBy==='score') g.jobs.sort((a,b)=>b.match_score-a.match_score);
+    else if(sortBy==='prob') g.jobs.sort((a,b)=>b.interview_probability-a.interview_probability);
+  });
+
+  // Sort groups
+  if(sortBy==='score') groups.sort((a,b)=>Math.max(...b.jobs.map(j=>j.match_score))-Math.max(...a.jobs.map(j=>j.match_score)));
+  else if(sortBy==='prob') groups.sort((a,b)=>Math.max(...b.jobs.map(j=>j.interview_probability))-Math.max(...a.jobs.map(j=>j.interview_probability)));
+  else groups.sort((a,b)=>new Date(Math.max(...b.jobs.map(j=>new Date(j.posted_date))))-new Date(Math.max(...a.jobs.map(j=>new Date(j.posted_date)))));
+
+  area.innerHTML=groups.map(g=>renderGroup(g)).join('');
+}
+
+function renderGroup({co,jobs}){
+  return `
+  <div class="co-section">
+    <div class="co-section-head">
+      <div class="co-logo-box">${co.name.slice(0,2).toUpperCase()}</div>
+      <div>
+        <div class="co-title">${esc(co.name)}</div>
+        <div class="co-desc">${esc(co.rel)}</div>
+      </div>
+      <span class="h1b-badge ${co.h1b==='moderate'?'mod':''}">${co.h1b==='strong'?'✓ H1-B Strong':'◐ H1-B Moderate'}</span>
+      <span class="co-count">${jobs.length} role${jobs.length!==1?'s':''}</span>
+    </div>
+    <div class="jobs-list">${jobs.map((j,i)=>renderJob(j,co,i)).join('')}</div>
+  </div>`;
+}
+
+function renderJob(j,co,idx){
+  const id=`job-${co.id}-${idx}`;
+  const sc=j.match_score||0;
+  const prob=j.interview_probability||0;
+  const scoreColor=sc>=70?'#10d988':sc>=50?'#f5c842':'#5a607a';
+  const probColor=prob>=60?'var(--green)':prob>=40?'var(--yellow)':'var(--red)';
+  const circ=2*Math.PI*22;
+  const offset=circ*(1-sc/100);
+
+  const tags=(j.match_tags||[]).map((t,i)=>`<span class="jtag ${i<2?'match':''}">${esc(t)}</span>`).join('');
+  const daysAgo=j.posted_date?Math.floor((Date.now()-new Date(j.posted_date))/(86400000)):'?';
+  const dateLabel=daysAgo===0?'Today':daysAgo===1?'Yesterday':`${daysAgo}d ago`;
+
+  // Resume tips
+  const tipsHtml=(j.resume_tips||[]).map((t,i)=>`
+    <div class="resume-tip">
+      <span class="tip-num">${i+1}</span>
+      <span>${esc(t)}</span>
+    </div>`).join('');
+
+  // Hiring manager
+  const hm=j.hiring_manager||{};
+  const hmInitials=(hm.name||'?').split(' ').map(w=>w[0]).slice(0,2).join('');
+  const liSearch=encodeURIComponent(hm.linkedin_search||hm.name+' '+co.name);
+  const outreach=hm.outreach_message||'';
+
+  return `
+  <div class="job-item" id="${id}" onclick="toggleJob('${id}')">
+    <div class="job-row">
+      <div class="job-main">
+        <div class="job-date-badge">
+          <span class="date-dot"></span>
+          ${esc(j.posted_date||'Recent')} · ${dateLabel}
+          ${j.location?'· '+esc(j.location):''}
+        </div>
+        <div class="job-title-text">${esc(j.title||'Role')}</div>
+        <div class="job-tags-row">${tags}</div>
+      </div>
+
+      <div class="match-col">
+        <div class="match-ring">
+          <svg width="56" height="56" viewBox="0 0 56 56">
+            <circle class="match-ring-bg" cx="28" cy="28" r="22"/>
+            <circle class="match-ring-fill"
+              cx="28" cy="28" r="22"
+              stroke="${scoreColor}"
+              stroke-dasharray="${circ}"
+              stroke-dashoffset="${offset}"/>
+          </svg>
+          <div class="match-num" style="color:${scoreColor}">${sc}</div>
+        </div>
+        <div class="match-lbl">MATCH</div>
+      </div>
+
+      <div class="prob-col">
+        <div class="prob-label">Interview Prob.</div>
+        <div class="prob-bar-track">
+          <div class="prob-bar-fill" style="width:${prob}%;background:${probColor}"></div>
+        </div>
+        <div class="prob-pct" style="color:${probColor}">${prob}%</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start">
+        <span style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted)">${esc(j.dept||'')}</span>
+        <span style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--muted);opacity:0.7">${esc(j.h1b_note||'H1-B eligible')}</span>
+      </div>
+
+      <div class="chevron">⌄</div>
+    </div>
+
+    <!-- EXPAND PANEL -->
+    <div class="job-panel" id="panel-${id}">
+      <div class="panel-inner">
+
+        <!-- RESUME TIPS -->
+        <div class="panel-block">
+          <div class="pb-title" style="color:#a78bfa"><span class="pb-icon">✏️</span>Resume Modifications</div>
+          ${tipsHtml||'<div style="font-size:12px;color:var(--muted)">No specific tips available.</div>'}
+          <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+            <div style="font-size:11px;font-family:\'JetBrains Mono\',monospace;color:var(--muted);margin-bottom:6px">AI ANALYSIS</div>
+            <div style="font-size:12px;color:var(--muted2);line-height:1.6">${esc(j.analysis||'')}</div>
+          </div>
+        </div>
+
+        <!-- HIRING MANAGER -->
+        <div class="panel-block">
+          <div class="pb-title" style="color:var(--green)"><span class="pb-icon">👤</span>Hiring Manager Intel</div>
+          <div class="hm-card">
+            <div class="hm-avatar" style="background:${esc(hm.avatar_color||'#6c63ff')}">${esc(hmInitials)}</div>
+            <div>
+              <div class="hm-name">${esc(hm.name||'Unknown')}</div>
+              <div class="hm-role">${esc(hm.title||'')}</div>
+              <div class="hm-actions">
+                <a class="hm-btn primary" href="https://www.linkedin.com/search/results/people/?keywords=${liSearch}" target="_blank">🔗 Find on LinkedIn</a>
+                <a class="hm-btn" href="mailto:?subject=Application - ${encodeURIComponent(j.title||'Role')} at ${esc(co.name)}" target="_blank">✉ Email</a>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:8px;letter-spacing:1px">LINKEDIN OUTREACH MESSAGE</div>
+          <div class="outreach-box" id="msg-${id}">
+            ${esc(outreach)}
+            <span class="outreach-copy" onclick="copyMsg('${id}',event)">Copy</span>
+          </div>
+        </div>
+
+        <!-- APPLY -->
+        <div class="panel-block">
+          <div class="pb-title" style="color:var(--yellow)"><span class="pb-icon">🚀</span>Apply Now</div>
+          <div style="font-size:12px;color:var(--muted2);line-height:1.6;margin-bottom:12px">
+            <strong style="color:var(--text);font-size:13px">${esc(j.title||'')}</strong><br>
+            ${esc(co.name)} · ${esc(j.location||'California')}<br>
+            <br>
+            <span style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px">POSTED</span><br>
+            ${esc(j.posted_date||'Recent')} (${dateLabel})
+          </div>
+
+          <div style="padding:12px;background:rgba(16,217,136,0.05);border:1px solid rgba(16,217,136,0.15);border-radius:8px;margin-bottom:14px">
+            <div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--green);letter-spacing:1px;margin-bottom:4px">H1-B STATUS</div>
+            <div style="font-size:12px;color:var(--muted2)">${esc(j.h1b_note||'Sponsorship available for qualified candidates')}</div>
+          </div>
+
+          <a class="panel-apply-btn" href="${esc(j.apply_url||co.url)}" target="_blank">
+            Apply on ${esc(co.name)} →
+          </a>
+          <div style="margin-top:10px;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace">
+            Interview probability: <span style="color:${probColor};font-weight:700">${prob}%</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// TOGGLE EXPAND
+// ══════════════════════════════════════════════════════════════
+function toggleJob(id){
+  const el=document.getElementById(id);
+  el.classList.toggle('expanded');
+}
+
+function copyMsg(id,e){
+  e.stopPropagation();
+  const box=document.getElementById('msg-'+id);
+  const text=box.textContent.replace('Copy','').trim();
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=box.querySelector('.outreach-copy');
+    btn.textContent='Copied!';btn.style.color='var(--green)';
+    setTimeout(()=>{btn.textContent='Copy';btn.style.color='';},2000);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════════════════════════
+function updStats(){
+  const all=results.flatMap(r=>r.jobs);
+  document.getElementById('s1').textContent=all.length;
+  document.getElementById('s2').textContent=all.filter(j=>j.match_score>=70).length;
+  const avgProb=all.length?Math.round(all.reduce((s,j)=>s+(j.interview_probability||0),0)/all.length):0;
+  document.getElementById('s3').textContent=all.length?avgProb+'%':'—';
+  document.getElementById('s4').textContent=results.filter(r=>r.jobs.length>0).length;
+}
+
+// ══════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function addLog(msg,type){
+  const b=document.getElementById('log-box');
+  const t=new Date().toLocaleTimeString('en',{hour12:false});
+  const cls=type==='d'?'ld':type==='e'?'le':'lw';
+  b.innerHTML+=`<div class="ll"><span class="lt">${t}</span><span class="${cls}">${msg}</span></div>`;
+  b.scrollTop=b.scrollHeight;
+}
+function showErr(msg){const e=document.getElementById('err-box');e.textContent='⚠ '+msg;e.classList.add('show');}
+function hideErr(){document.getElementById('err-box').classList.remove('show');}
+</script>
+</body>
+</html>
